@@ -120,13 +120,3 @@ private fun TestTextTree() {
         }
     )
 }
-
-
-//@Preview
-//@Composable
-//fun TestText() {
-//    Image(
-//        painter = painterResource(id = R.drawable.instagram),
-//        contentDescription = ""
-//    )
-//}
