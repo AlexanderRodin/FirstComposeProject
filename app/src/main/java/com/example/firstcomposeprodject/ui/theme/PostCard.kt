@@ -46,16 +46,10 @@ fun PostCard(
     onCommentClickListener: (StatisticItem) -> Unit
 ) {
     Card(
-        modifier = Modifier.padding(4.dp),
-        shape = RoundedCornerShape(size = 4.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-        colors = CardDefaults.cardColors(
-            MaterialTheme.colorScheme.background,
-        )
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .padding(8.dp)
         ) {
             PostHeader(feedPost)
