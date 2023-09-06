@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.StatisticItem
+import com.example.firstcomposeprodject.ui.theme.NavigationItem
 import kotlin.random.Random
 
 class MainViewModel : ViewModel() {
@@ -16,6 +17,7 @@ class MainViewModel : ViewModel() {
     }
     private val _feedPosts = MutableLiveData<List<FeedPost>>(sourceList)
     val feedPosts: LiveData<List<FeedPost>> = _feedPosts
+
 
     fun updateCount(feedPost: FeedPost, item: StatisticItem) {
         val oldPosts = feedPosts.value?.toMutableList() ?: mutableListOf()
