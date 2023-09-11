@@ -20,9 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.navigation.AppNavGraph
+import com.example.firstcomposeprodject.navigation.Screen
 import com.example.firstcomposeprodject.navigation.rememberNavigationState
 import com.example.firstcomposeprodject.ui.theme.screen.CommentsScreen
 import com.example.firstcomposeprodject.ui.theme.screen.HomeScreen
@@ -32,7 +34,7 @@ import com.example.firstcomposeprodject.ui.theme.screen.HomeScreen
 fun MainScreen() {
 
     val navigationState = rememberNavigationState()
-    val commentsToPosts: MutableState<FeedPost?> = remember{
+    val commentsToPosts: MutableState<FeedPost?> = remember {
         mutableStateOf(null)
     }
 
@@ -40,16 +42,25 @@ fun MainScreen() {
         bottomBar = {
             NavigationBar {
                 val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
-                val currentRout = navBackStackEntry?.destination?.route
+
                 val items = listOf(
                     NavigationItem.Home,
                     NavigationItem.Favourite,
                     NavigationItem.Profile
                 )
                 items.forEach { item ->
+
+                    val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                        it.route == item.screen.rout
+                    } ?: false
+
                     NavigationBarItem(
-                        selected = currentRout == item.screen.rout,
-                        onClick = { navigationState.navigateTo(item.screen.rout) },
+                        selected = selected,
+                        onClick = {
+                            if (!selected) {
+                                navigationState.navigateTo(item.screen.rout)
+                            }
+                        },
                         icon = { Icon(item.icon, null) },
                         label = { Text(text = stringResource(id = item.titleResId)) },
                         colors = NavigationBarItemDefaults.colors(
@@ -67,24 +78,22 @@ fun MainScreen() {
 
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            homeScreenContent = {
-                if (commentsToPosts.value == null){
-                    HomeScreen(
-                        paddingValues = paddingValues,
-                        onCommentsClickListener = {
-                            commentsToPosts.value = it
-                        }
-                    )
-                }else{
-                    CommentsScreen (
-                        onBackPressed = {
-                            commentsToPosts.value = null
-                        },
-                        feedPost = commentsToPosts.value!!
-                    )
-
-                }
-
+            newsFeedScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentsClickListener = {
+                        commentsToPosts.value = it
+                        navigationState.navigateToComments()
+                    }
+                )
+            },
+            commentsScreenContent = {
+                CommentsScreen(
+                    onBackPressed = {
+                        navigationState.navHostController.popBackStack()
+                    },
+                    feedPost = commentsToPosts.value!!
+                )
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = { TextCounter(name = "Profile") }

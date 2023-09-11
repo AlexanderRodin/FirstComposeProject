@@ -98,6 +98,7 @@ fun CommentItem(
         Image(
             modifier = Modifier.padding(24.dp),
             painter = painterResource(id = comment.authorAvatar),
+
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))

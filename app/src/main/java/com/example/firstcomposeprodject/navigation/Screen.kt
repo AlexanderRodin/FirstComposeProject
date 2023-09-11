@@ -6,8 +6,12 @@ sealed class Screen(
     object NewsFeed: Screen(ROUTE_NEWS_FEED)
     object Favourite: Screen(ROUTE_FAVOURITE)
     object Profile: Screen(ROUTE_PROFILE)
+    object Home:Screen(ROOT_HOME)
+    object Comments:Screen(ROOT_COMMENTS)
 
     companion object{
+        const val ROOT_HOME = "home"
+        const val ROOT_COMMENTS = "comments"
         const val ROUTE_NEWS_FEED = "news_feed"
         const val ROUTE_FAVOURITE = "favourite"
         const val ROUTE_PROFILE = "profile"
