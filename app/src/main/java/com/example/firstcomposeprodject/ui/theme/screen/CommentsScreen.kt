@@ -20,52 +20,63 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.firstcomposeprodject.CommentsViewModel
+import com.example.firstcomposeprodject.CommentsViewModelFactory
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.PostComment
+import com.example.firstcomposeprodject.ui.theme.CommentsScreenState
 import com.example.firstcomposeprodject.ui.theme.FirstComposeProjectTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
     feedPost: FeedPost,
-    comments: List<PostComment>,
-    onBackPressed: ()-> Unit
+    onBackPressed: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = {
-                Text(text = "Comments for FeedPost Id: ${feedPost.id}")
-            },
-                navigationIcon = {
-                    IconButton(onClick = { onBackPressed() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null
-                        )
+    val viewModel: CommentsViewModel = viewModel(
+        factory = CommentsViewModelFactory(feedPost)
+    )
+    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
+    val currentState = screenState.value
+    if (currentState is CommentsScreenState.Comments) {
+        Scaffold(
+            topBar = {
+                TopAppBar(title = {
+                    Text(text = "Comments for FeedPost Id: ${currentState.feedPost.id}")
+                },
+                    navigationIcon = {
+                        IconButton(onClick = { onBackPressed() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = null
+                            )
+                        }
                     }
+                )
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues),
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    start = 8.dp,
+                    end = 8.dp,
+                    bottom = 72.dp
+                )
+            ) {
+                items(
+                    items = currentState.comments,
+                    key = { it.id }
+                ) { comment ->
+                    CommentItem(comment = comment)
                 }
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 72.dp
-            )
-        ) {
-            items(
-                items = comments,
-                key = { it.id }
-            ) { comment ->
-                CommentItem(comment = comment)
             }
         }
     }
