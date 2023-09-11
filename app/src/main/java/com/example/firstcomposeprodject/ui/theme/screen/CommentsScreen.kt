@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.ui.theme
+package com.example.firstcomposeprodject.ui.theme.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -27,12 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.PostComment
+import com.example.firstcomposeprodject.ui.theme.FirstComposeProjectTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
     feedPost: FeedPost,
-    comments: List<PostComment>
+    comments: List<PostComment>,
+    onBackPressed: ()-> Unit
 ) {
     Scaffold(
         topBar = {
@@ -40,7 +42,7 @@ fun CommentsScreen(
                 Text(text = "Comments for FeedPost Id: ${feedPost.id}")
             },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null

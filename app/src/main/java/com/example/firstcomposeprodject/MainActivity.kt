@@ -29,7 +29,7 @@ import com.example.firstcomposeprodject.ui.theme.MainScreen
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
+    private val viewModel by viewModels<NewsFeedViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Test(viewModel: MainViewModel) {
+private fun Test(viewModel: NewsFeedViewModel) {
     FirstComposeProjectTheme {
         Box(
             modifier = Modifier.fillMaxSize(),

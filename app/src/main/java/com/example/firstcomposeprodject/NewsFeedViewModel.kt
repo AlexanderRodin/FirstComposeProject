@@ -4,23 +4,35 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firstcomposeprodject.domain.FeedPost
+import com.example.firstcomposeprodject.domain.PostComment
 import com.example.firstcomposeprodject.domain.StatisticItem
-import com.example.firstcomposeprodject.ui.theme.NavigationItem
+import com.example.firstcomposeprodject.ui.theme.HomeScreenState
 import kotlin.random.Random
 
-class MainViewModel : ViewModel() {
+class NewsFeedViewModel : ViewModel() {
 
     private val sourceList = mutableListOf<FeedPost>().apply {
         repeat(10) {
             add(FeedPost(id = it))
         }
     }
-    private val _feedPosts = MutableLiveData<List<FeedPost>>(sourceList)
-    val feedPosts: LiveData<List<FeedPost>> = _feedPosts
 
+    private val comments = mutableListOf<PostComment>().apply {
+        repeat(10) {
+            add(PostComment(id = it))
+        }
+    }
+
+    private val initialState = HomeScreenState.Posts(posts = sourceList)
+    private val _screenState = MutableLiveData<HomeScreenState>(initialState)
+    val screenState: LiveData<HomeScreenState> = _screenState
+    private var saveState: HomeScreenState? = initialState
 
     fun updateCount(feedPost: FeedPost, item: StatisticItem) {
-        val oldPosts = feedPosts.value?.toMutableList() ?: mutableListOf()
+
+        val currentState = screenState.value
+        if (currentState !is HomeScreenState.Posts) return
+        val oldPosts = currentState.posts.toMutableList()
         val oldStatistics = feedPost.statistics
         val newStatistics = oldStatistics.toMutableList().apply {
             replaceAll { oldItem ->
@@ -32,7 +44,7 @@ class MainViewModel : ViewModel() {
             }
         }
         val newFeedPost = feedPost.copy(statistics = newStatistics)
-        _feedPosts.value = oldPosts.apply {
+        val newPosts = oldPosts.apply {
             replaceAll {
                 if (it.id == newFeedPost.id) {
                     newFeedPost
@@ -41,12 +53,20 @@ class MainViewModel : ViewModel() {
                 }
             }
         }
+        _screenState.value = HomeScreenState.Posts(newPosts)
     }
 
     fun remove(feedPost: FeedPost) {
-        val oldPosts = feedPosts.value?.toMutableList() ?: mutableListOf()
+        val currentState = screenState.value
+        if (currentState !is HomeScreenState.Posts) return
+
+        val oldPosts = currentState.posts.toMutableList()
         oldPosts.remove(feedPost)
-        _feedPosts.value = oldPosts
+        _screenState.value = HomeScreenState.Posts(oldPosts)
+    }
+
+    fun closeComments(){
+        _screenState.value = saveState
     }
 
     private val initialList = mutableListOf<InstagramModel>().apply {
@@ -59,6 +79,13 @@ class MainViewModel : ViewModel() {
                 )
             )
         }
+    }
+
+    fun showComments(
+        feedPost: FeedPost
+    ) {
+       saveState = _screenState.value
+        _screenState.value = HomeScreenState.Comments(feedPost = feedPost, comments = comments)
     }
 
     private val _models = MutableLiveData<List<InstagramModel>>(initialList)
@@ -81,6 +108,4 @@ class MainViewModel : ViewModel() {
         modifiedList.remove(model)
         _models.value = modifiedList
     }
-
-
 }
