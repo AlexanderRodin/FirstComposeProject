@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.ui.theme.screen
+package com.example.firstcomposeprodject.prsentation.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -27,11 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.firstcomposeprodject.CommentsViewModel
-import com.example.firstcomposeprodject.CommentsViewModelFactory
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.PostComment
-import com.example.firstcomposeprodject.ui.theme.CommentsScreenState
 import com.example.firstcomposeprodject.ui.theme.FirstComposeProjectTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,15 +1,14 @@
-package com.example.firstcomposeprodject
+package com.example.firstcomposeprodject.prsentation.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.PostComment
-import com.example.firstcomposeprodject.ui.theme.CommentsScreenState
 
 class CommentsViewModel(
     feedPost: FeedPost
-): ViewModel() {
+) : ViewModel() {
 
     private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState> = _screenState
@@ -18,11 +17,11 @@ class CommentsViewModel(
         loadComets(feedPost)
     }
 
-    private fun loadComets (
+    private fun loadComets(
         feedPost: FeedPost
     ) {
         val comments = mutableListOf<PostComment>().apply {
-            repeat(10){
+            repeat(10) {
                 add(PostComment(id = it))
             }
         }

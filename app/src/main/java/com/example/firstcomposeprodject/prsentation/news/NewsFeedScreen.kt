@@ -1,6 +1,5 @@
-package com.example.firstcomposeprodject.ui.theme.screen
+package com.example.firstcomposeprodject.prsentation.news
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,18 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.firstcomposeprodject.NewsFeedViewModel
 import com.example.firstcomposeprodject.domain.FeedPost
-import com.example.firstcomposeprodject.ui.theme.NewsFeedScreenState
-import com.example.firstcomposeprodject.ui.theme.PostCard
 
 @Composable
-fun HomeScreen(
+fun NewsFeedScreen(
     paddingValues: PaddingValues,
-    onCommentsClickListener: (FeedPost)-> Unit
+    onCommentsClickListener: (FeedPost) -> Unit
 ) {
     val viewModel: NewsFeedViewModel = viewModel()
     val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
@@ -52,7 +46,7 @@ private fun FeedPosts(
     posts: List<FeedPost>,
     viewModel: NewsFeedViewModel,
     paddingValues: PaddingValues,
-    onCommentsClickListener: (FeedPost)-> Unit
+    onCommentsClickListener: (FeedPost) -> Unit
 ) {
     LazyColumn(
         modifier = androidx.compose.ui.Modifier.padding(paddingValues),
@@ -86,7 +80,7 @@ private fun FeedPosts(
                         onShareClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)
                         },
-                        onViewsClickListener = {statisticItem->
+                        onViewsClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)
                         },
                         onCommentClickListener = {

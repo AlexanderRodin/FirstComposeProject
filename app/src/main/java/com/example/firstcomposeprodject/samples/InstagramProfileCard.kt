@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.ui.theme
+package com.example.firstcomposeprodject.samples
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.firstcomposeprodject.InstagramModel
 import com.example.firstcomposeprodject.R
 
 @Composable

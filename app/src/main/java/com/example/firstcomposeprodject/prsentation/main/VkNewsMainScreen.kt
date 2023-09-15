@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.ui.theme
+package com.example.firstcomposeprodject.prsentation.main
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -10,11 +10,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -22,12 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.navigation.AppNavGraph
-import com.example.firstcomposeprodject.navigation.Screen
 import com.example.firstcomposeprodject.navigation.rememberNavigationState
-import com.example.firstcomposeprodject.ui.theme.screen.CommentsScreen
-import com.example.firstcomposeprodject.ui.theme.screen.HomeScreen
+import com.example.firstcomposeprodject.prsentation.comments.CommentsScreen
+import com.example.firstcomposeprodject.prsentation.news.NewsFeedScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -76,7 +71,7 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(
+                NewsFeedScreen(
                     paddingValues = paddingValues,
                     onCommentsClickListener = {
                         navigationState.navigateToComments(it)

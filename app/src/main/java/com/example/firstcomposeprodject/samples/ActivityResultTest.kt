@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.ui.theme
+package com.example.firstcomposeprodject.samples
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

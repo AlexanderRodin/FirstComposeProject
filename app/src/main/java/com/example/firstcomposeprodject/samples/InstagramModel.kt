@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject
+package com.example.firstcomposeprodject.samples
 
 data class InstagramModel(
     val id: Int,

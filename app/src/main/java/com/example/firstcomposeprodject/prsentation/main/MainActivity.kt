@@ -1,14 +1,13 @@
-package com.example.firstcomposeprodject
+package com.example.firstcomposeprodject.prsentation.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.firstcomposeprodject.ui.theme.FirstComposeProjectTheme
-import com.example.firstcomposeprodject.ui.theme.MainScreen
 import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
 
 
@@ -17,22 +16,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FirstComposeProjectTheme {
+                val viewModel: MainViewModel = viewModel()
+                val authState = viewModel.authState.observeAsState(AuthState.Initial)
                 val launcher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract()
                 ) {
-                    when (it) {
-                        is VKAuthenticationResult.Success -> {
-                            Log.d("MainActivity", "Success auth")
-                        }
+                    viewModel.performAuthResult(it)
+                }
+                when (authState.value) {
+                    is AuthState.Authorized -> {
+                        MainScreen()
+                    }
 
-                        is VKAuthenticationResult.Failed -> {
-                            Log.d("MainActivity", "Failed auth")
+                    is AuthState.NotAuthorized -> {
+                        LoginScreen {
+                            launcher.launch(listOf(VKScope.WALL))
                         }
                     }
+
+                    else -> {}
                 }
-                launcher.launch(listOf(VKScope.WALL))
-                MainScreen()
             }
+
         }
     }
 }

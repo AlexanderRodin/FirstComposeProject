@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.ui.theme
+package com.example.firstcomposeprodject.prsentation.news
 
 import com.example.firstcomposeprodject.domain.FeedPost
 

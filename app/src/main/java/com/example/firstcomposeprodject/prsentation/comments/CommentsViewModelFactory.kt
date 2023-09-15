@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject
+package com.example.firstcomposeprodject.prsentation.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

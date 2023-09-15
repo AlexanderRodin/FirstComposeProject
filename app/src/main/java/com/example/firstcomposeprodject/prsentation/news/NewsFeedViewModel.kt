@@ -1,11 +1,11 @@
-package com.example.firstcomposeprodject
+package com.example.firstcomposeprodject.prsentation.news
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.firstcomposeprodject.samples.InstagramModel
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.StatisticItem
-import com.example.firstcomposeprodject.ui.theme.NewsFeedScreenState
 import kotlin.random.Random
 
 class NewsFeedViewModel : ViewModel() {
