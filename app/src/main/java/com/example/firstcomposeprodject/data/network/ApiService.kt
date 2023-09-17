@@ -8,5 +8,5 @@ interface ApiService {
     @GET("newsfeed.getRecommended?v=5.131")
     suspend fun loadNews(
         @Query("access_token") token: String
-        ): NewsFeedResponse
+    ): NewsFeedResponse
 }
