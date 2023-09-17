@@ -1,33 +1,45 @@
 package com.example.firstcomposeprodject.prsentation.news
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.firstcomposeprodject.samples.InstagramModel
+import androidx.lifecycle.viewModelScope
+import com.example.firstcomposeprodject.data.mapper.NewsFeedMapper
+import com.example.firstcomposeprodject.data.network.ApiFactory
 import com.example.firstcomposeprodject.domain.FeedPost
 import com.example.firstcomposeprodject.domain.StatisticItem
-import kotlin.random.Random
+import com.vk.api.sdk.VKPreferencesKeyValueStorage
+import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.launch
 
-class NewsFeedViewModel : ViewModel() {
+class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val sourceList = mutableListOf<FeedPost>().apply {
-        repeat(10) {
-            add(
-                FeedPost(
-                    id = it,
-                    contentText = "Con/tent : $it"
-                )
-            )
-        }
-    }
-    private val initialState = NewsFeedScreenState.Posts(posts = sourceList)
+    private val initialState = NewsFeedScreenState.Initial
 
     private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
     val screenState: LiveData<NewsFeedScreenState> = _screenState
 
+    private val mapper = NewsFeedMapper()
+
+    init {
+        loadRecommendations()
+    }
+
+    private fun loadRecommendations() {
+        viewModelScope.launch {
+            val storage = VKPreferencesKeyValueStorage(getApplication())
+            val token = VKAccessToken.restore(storage) ?: return@launch
+            val response = ApiFactory.apiService.loadNews(token.accessToken)
+            val feedPosts = mapper.mapResponseToPosts(response)
+            _screenState.value = NewsFeedScreenState.Posts(posts = feedPosts)
+        }
+    }
+
     fun updateCount(feedPost: FeedPost, item: StatisticItem) {
         val currentState = screenState.value
         if (currentState !is NewsFeedScreenState.Posts) return
+
         val oldPosts = currentState.posts.toMutableList()
         val oldStatistics = feedPost.statistics
         val newStatistics = oldStatistics.toMutableList().apply {
@@ -49,7 +61,7 @@ class NewsFeedViewModel : ViewModel() {
                 }
             }
         }
-        _screenState.value = NewsFeedScreenState.Posts(newPosts)
+        _screenState.value = NewsFeedScreenState.Posts(posts = newPosts)
     }
 
     fun remove(feedPost: FeedPost) {
@@ -58,42 +70,6 @@ class NewsFeedViewModel : ViewModel() {
 
         val oldPosts = currentState.posts.toMutableList()
         oldPosts.remove(feedPost)
-        _screenState.value = NewsFeedScreenState.Posts(oldPosts)
-    }
-
-
-//    Instagram profile card
-
-    private val initialList = mutableListOf<InstagramModel>().apply {
-        repeat(500) {
-            add(
-                InstagramModel(
-                    id = it,
-                    title = "Title: $it",
-                    isFollowed = Random.nextBoolean()
-                )
-            )
-        }
-    }
-
-    private val _models = MutableLiveData<List<InstagramModel>>(initialList)
-    val models: LiveData<List<InstagramModel>> = _models
-
-    fun changeFollowingStatus(model: InstagramModel) {
-        val modifiedList = _models.value?.toMutableList() ?: mutableListOf()
-        modifiedList.replaceAll {
-            if (it == model) {
-                it.copy(isFollowed = !it.isFollowed)
-            } else {
-                it
-            }
-        }
-        _models.value = modifiedList
-    }
-
-    fun delete(model: InstagramModel) {
-        val modifiedList = _models.value?.toMutableList() ?: mutableListOf()
-        modifiedList.remove(model)
-        _models.value = modifiedList
+        _screenState.value = NewsFeedScreenState.Posts(posts = oldPosts)
     }
 }
