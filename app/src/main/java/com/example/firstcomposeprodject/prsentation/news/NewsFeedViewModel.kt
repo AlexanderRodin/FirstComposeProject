@@ -25,10 +25,18 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
     private fun loadRecommendations() {
         viewModelScope.launch {
-
             val feedPosts = repository.loadRecommendation()
             _screenState.value = NewsFeedScreenState.Posts(posts = feedPosts)
         }
+    }
+
+    fun loadNextRecommendation() {
+        _screenState.value =
+            NewsFeedScreenState.Posts(
+                posts = repository.feedPosts,
+                nextDataIsLoading = true
+            )
+        loadRecommendations()
     }
 
     fun updateCount(feedPost: FeedPost, item: StatisticItem) {
@@ -59,6 +67,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
         _screenState.value = NewsFeedScreenState.Posts(posts = newPosts)
     }
 
+
     fun changeLikeStatus(feedPost: FeedPost) {
         viewModelScope.launch {
             repository.changeLikeStatus(feedPost)
@@ -67,11 +76,10 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun remove(feedPost: FeedPost) {
-        val currentState = screenState.value
-        if (currentState !is NewsFeedScreenState.Posts) return
+       viewModelScope.launch {
+           repository.deletePost(feedPost)
+           _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
+       }
 
-        val oldPosts = currentState.posts.toMutableList()
-        oldPosts.remove(feedPost)
-        _screenState.value = NewsFeedScreenState.Posts(posts = oldPosts)
     }
 }
