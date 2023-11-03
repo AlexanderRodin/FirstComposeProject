@@ -1,7 +1,9 @@
 package com.example.firstcomposeprodject.data.mapper
 
+import com.example.firstcomposeprodject.data.model.CommentsResponseDto
 import com.example.firstcomposeprodject.data.model.NewsFeedResponse
 import com.example.firstcomposeprodject.domain.FeedPost
+import com.example.firstcomposeprodject.domain.PostComment
 import com.example.firstcomposeprodject.domain.StatisticItem
 import com.example.firstcomposeprodject.domain.StatisticType
 import java.text.SimpleDateFormat
@@ -23,7 +25,7 @@ class NewsFeedMapper {
                 id = post.id,
                 communityId = post.communityId,
                 communityName = group.name,
-                publicationDate = mapTimestampToDate(post.date * 1000),
+                publicationDate = mapTimestampToDate(post.date),
                 communityImageUrl = group.imgUrl,
                 contentText = post.text,
                 contentImgUrl = post.attachments?.firstOrNull()?.photo?.photoUrl?.lastOrNull()?.url,
@@ -40,8 +42,27 @@ class NewsFeedMapper {
         return result
     }
 
+    fun mapResponseToComment(response: CommentsResponseDto): List<PostComment>{
+        val result = mutableListOf<PostComment>()
+        val comments = response.content.comments
+        val profile = response.content.profiles
+        for (comment in comments){
+            if (comment.text.isBlank()) continue
+            val author = profile.firstOrNull{it.id == comment.authorId} ?: continue
+            val postComment = PostComment(
+                id = comment.id,
+                authorName = "${author.firstName} ${author.lastName}",
+                authorAvatarUrl = author.photoUrl,
+                commentText = comment.text,
+                publicationDate = mapTimestampToDate(comment.date)
+            )
+            result.add(postComment)
+        }
+        return result
+    }
+
     private fun mapTimestampToDate(timestamp: Long): String {
-        val date = Date(timestamp)
+        val date = Date(timestamp * 1000)
         return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
     }
 }

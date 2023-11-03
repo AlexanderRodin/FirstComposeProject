@@ -40,8 +40,6 @@ fun PostCard(
     modifier: Modifier = Modifier,
     feedPost: FeedPost,
     onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit
 ) {
     Card(
@@ -67,8 +65,6 @@ fun PostCard(
             PostStatistics(
                 statistics = feedPost.statistics,
                 onLikeClickListener = onLikeClickListener,
-                onShareClickListener = onShareClickListener,
-                onViewsClickListener = onViewsClickListener,
                 onCommentClickListener = onCommentClickListener,
                 isFavorite = feedPost.isLiked
             )
@@ -80,8 +76,6 @@ fun PostCard(
 private fun PostStatistics(
     statistics: List<StatisticItem>,
     onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     isFavorite: Boolean
 ) {
@@ -91,9 +85,6 @@ private fun PostStatistics(
             IconWithText(
                 iconResId = R.drawable.ic_views_count,
                 text = formatStatisticCount(viewsItem.count),
-                onItemClickListener = {
-                    onViewsClickListener(viewsItem)
-                }
             )
         }
         Row(
@@ -104,10 +95,8 @@ private fun PostStatistics(
             IconWithText(
                 iconResId = R.drawable.ic_share,
                 text = formatStatisticCount(sharesItem.count),
-                onItemClickListener = {
-                    onShareClickListener(sharesItem)
-                }
-            )
+
+                )
             val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
             IconWithText(
                 iconResId = R.drawable.ic_comment,
@@ -147,12 +136,17 @@ private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticIte
 private fun IconWithText(
     iconResId: Int,
     text: String,
-    onItemClickListener: () -> Unit,
+    onItemClickListener: (() -> Unit)? = null,
     tint: Color = Black500
 ) {
-    Row(modifier = Modifier.clickable {
-        onItemClickListener()
-    }) {
+    val modifier = if (onItemClickListener == null) {
+        Modifier
+    } else {
+        Modifier.clickable {
+            onItemClickListener()
+        }
+    }
+    Row(modifier = modifier) {
         Icon(
             modifier = Modifier.size(20.dp),
             painter = painterResource(id = iconResId),
