@@ -1,4 +1,4 @@
-package com.example.firstcomposeprodject.prsentation.main
+package com.example.firstcomposeprodject.domain
 
 sealed class AuthState{
     object Authorized: AuthState()
