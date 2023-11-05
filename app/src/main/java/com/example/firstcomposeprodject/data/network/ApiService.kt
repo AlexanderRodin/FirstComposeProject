@@ -9,12 +9,12 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("newsfeed.getRecommended?v=5.131")
-    suspend fun loadNews(
+    suspend fun loadRecommendations(
         @Query("access_token") token: String
     ): NewsFeedResponse
 
     @GET("newsfeed.getRecommended?v=5.131")
-    suspend fun loadNews(
+    suspend fun loadRecommendations(
         @Query("access_token") token: String,
         @Query("start_from") startFrom: String
     ): NewsFeedResponse

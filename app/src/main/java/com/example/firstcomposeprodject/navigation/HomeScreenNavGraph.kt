@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.firstcomposeprodject.domain.FeedPost
+import com.example.firstcomposeprodject.domain.entity.FeedPost
 import com.google.gson.Gson
 
 fun NavGraphBuilder.homeScreenNavGraph(

@@ -29,9 +29,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.firstcomposeprodject.R
-import com.example.firstcomposeprodject.domain.FeedPost
-import com.example.firstcomposeprodject.domain.StatisticItem
-import com.example.firstcomposeprodject.domain.StatisticType
+import com.example.firstcomposeprodject.domain.entity.FeedPost
+import com.example.firstcomposeprodject.domain.entity.StatisticItem
+import com.example.firstcomposeprodject.domain.entity.StatisticType
 import com.example.firstcomposeprodject.ui.theme.Black500
 import com.example.firstcomposeprodject.ui.theme.DarkRed
 

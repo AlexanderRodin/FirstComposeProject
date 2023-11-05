@@ -4,8 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.firstcomposeprodject.data.repository.NewsFeedRepository
-import com.example.firstcomposeprodject.domain.FeedPost
+import com.example.firstcomposeprodject.data.repository.NewsFeedRepositoryImpl
+import com.example.firstcomposeprodject.domain.entity.FeedPost
+import com.example.firstcomposeprodject.domain.usecases.ChangeLikeStatusUseCase
+import com.example.firstcomposeprodject.domain.usecases.DeletePostUseCase
+import com.example.firstcomposeprodject.domain.usecases.GetRecomendationsUseCase
+import com.example.firstcomposeprodject.domain.usecases.LoadingNextDataUseCase
 import com.example.firstcomposeprodject.extensions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,11 +20,17 @@ import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val exceptionHandler = CoroutineExceptionHandler{ _, _ ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.d("NewsFeedViewModel", "Exception caught by exception handler")
     }
-    private val repository = NewsFeedRepository(application)
-    private val recomendationsFlow = repository.recommendations
+    private val repository = NewsFeedRepositoryImpl(application)
+
+    private val getRecomendationsUseCase = GetRecomendationsUseCase(repository)
+    private val loadingNextDataUseCase = LoadingNextDataUseCase(repository)
+    private val changeLikeStatusUseCase = ChangeLikeStatusUseCase(repository)
+    private val deletePostUseCase = DeletePostUseCase(repository)
+
+    private val recomendationsFlow = getRecomendationsUseCase()
     private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
 
     val screenState = recomendationsFlow
@@ -37,19 +47,19 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
                     nextDataIsLoading = true
                 )
             )
-            repository.loadNextData()
+            loadingNextDataUseCase()
         }
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
-        viewModelScope.launch (exceptionHandler) {
-            repository.changeLikeStatus(feedPost)
+        viewModelScope.launch(exceptionHandler) {
+            changeLikeStatusUseCase(feedPost)
         }
     }
 
     fun remove(feedPost: FeedPost) {
-        viewModelScope.launch (exceptionHandler) {
-            repository.deletePost(feedPost)
+        viewModelScope.launch(exceptionHandler) {
+            deletePostUseCase(feedPost)
         }
     }
 }
