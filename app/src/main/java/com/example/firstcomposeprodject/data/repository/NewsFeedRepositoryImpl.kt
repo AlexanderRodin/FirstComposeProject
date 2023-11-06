@@ -1,32 +1,32 @@
 package com.example.firstcomposeprodject.data.repository
 
-import android.app.Application
 import com.example.firstcomposeprodject.data.mapper.NewsFeedMapper
-import com.example.firstcomposeprodject.data.network.ApiFactory
+import com.example.firstcomposeprodject.data.network.ApiService
+import com.example.firstcomposeprodject.domain.entity.AuthState
 import com.example.firstcomposeprodject.domain.entity.FeedPost
 import com.example.firstcomposeprodject.domain.entity.PostComment
 import com.example.firstcomposeprodject.domain.entity.StatisticItem
 import com.example.firstcomposeprodject.domain.entity.StatisticType
-import com.example.firstcomposeprodject.extensions.mergeWith
-import com.example.firstcomposeprodject.domain.entity.AuthState
 import com.example.firstcomposeprodject.domain.repository.NewsFeedRepository
+import com.example.firstcomposeprodject.extensions.mergeWith
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class NewsFeedRepositoryImpl(application: Application): NewsFeedRepository {
-    private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
-    private val storage = VKPreferencesKeyValueStorage(application)
+class NewsFeedRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    private val mapper: NewsFeedMapper,
+    private val storage: VKPreferencesKeyValueStorage
+) : NewsFeedRepository {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
@@ -47,9 +47,11 @@ class NewsFeedRepositoryImpl(application: Application): NewsFeedRepository {
         started = SharingStarted.Lazily,
         initialValue = AuthState.Initial
     )
+
     private fun getAccessToken(): String {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
+
     private val _feedPosts = mutableListOf<FeedPost>()
     private val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()

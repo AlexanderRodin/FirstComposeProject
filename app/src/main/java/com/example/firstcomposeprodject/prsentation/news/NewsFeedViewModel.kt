@@ -1,10 +1,8 @@
 package com.example.firstcomposeprodject.prsentation.news
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.firstcomposeprodject.data.repository.NewsFeedRepositoryImpl
 import com.example.firstcomposeprodject.domain.entity.FeedPost
 import com.example.firstcomposeprodject.domain.usecases.ChangeLikeStatusUseCase
 import com.example.firstcomposeprodject.domain.usecases.DeletePostUseCase
@@ -17,18 +15,19 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
+class NewsFeedViewModel @Inject constructor(
+    private val getRecomendationsUseCase: GetRecomendationsUseCase,
+    private val loadingNextDataUseCase: LoadingNextDataUseCase,
+    private val changeLikeStatusUseCase: ChangeLikeStatusUseCase,
+    private val deletePostUseCase: DeletePostUseCase,
+) : ViewModel() {
 
     private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.d("NewsFeedViewModel", "Exception caught by exception handler")
     }
-    private val repository = NewsFeedRepositoryImpl(application)
 
-    private val getRecomendationsUseCase = GetRecomendationsUseCase(repository)
-    private val loadingNextDataUseCase = LoadingNextDataUseCase(repository)
-    private val changeLikeStatusUseCase = ChangeLikeStatusUseCase(repository)
-    private val deletePostUseCase = DeletePostUseCase(repository)
 
     private val recomendationsFlow = getRecomendationsUseCase()
     private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
